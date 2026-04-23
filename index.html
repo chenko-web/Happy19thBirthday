@@ -15,6 +15,7 @@ body {
   overflow-x:hidden;
 }
 
+/* ================= PASSWORD + QUIZ ================= */
 .hidden { display:none; }
 
 #passwordBox, #quizBox { margin-top: 30vh; }
@@ -39,7 +40,12 @@ button {
 
 #startBtn { margin-top:40vh; background:pink; }
 
-#content { animation: fadeIn 2s ease-in-out; }
+/* ================= CONTENT ================= */
+#content {
+  animation: fadeIn 2s ease-in-out;
+  position: relative;
+  z-index: 2;
+}
 
 h1 { font-size:40px; color:#ff4da6; }
 
@@ -48,13 +54,13 @@ h1 { font-size:40px; color:#ff4da6; }
   to{opacity:1;}
 }
 
-/* === IMAGE AREA === */
+/* ================= SLIDESHOW (DESKTOP) ================= */
 #slideshow {
   position: relative;
   width: 100%;
   height: 350px;
   margin-top: 40px;
-  margin-bottom: 140px;
+  margin-bottom: 120px;
 }
 
 .slide {
@@ -65,92 +71,104 @@ h1 { font-size:40px; color:#ff4da6; }
   left: 50%;
   transform: translate(-50%, -50%) scale(0.5);
   opacity: 0;
-  z-index: 1;
 }
 
-/* === ANIMATION === */
+/* desktop split animation */
 @keyframes splitLeft {
-  from { transform: translate(-50%, -50%) scale(0.5); opacity:0; }
   to { transform: translate(-220%, -45%) scale(1) rotate(-10deg); opacity:1; }
 }
-
 @keyframes splitCenter {
-  from { transform: translate(-50%, -50%) scale(0.5); opacity:0; }
   to { transform: translate(-50%, -50%) scale(1); opacity:1; }
 }
-
 @keyframes splitRight {
-  from { transform: translate(-50%, -50%) scale(0.5); opacity:0; }
   to { transform: translate(120%, -50%) scale(1) rotate(10deg); opacity:1; }
 }
 
-/* === LETTER === */
+/* ================= LETTER ================= */
 #letter {
-  margin-top: 60px;
+  margin-top: 40px;
   font-size:20px;
   width:80%;
   margin-left:auto;
   margin-right:auto;
-  position: relative;
-  z-index: 2;
   text-shadow: 0 0 10px pink;
 }
 
-/* Floating hearts */
+/* ================= HEART LAYER (FULL SCREEN FIX) ================= */
+#heartContainer {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+  z-index: 1;
+}
+
 .heart {
   position: absolute;
+  bottom: -50px;
   color: pink;
-  animation: float 5s linear infinite;
+  animation: floatUp 6s linear infinite;
+  opacity: 0.8;
 }
 
-@keyframes float {
-  0% { transform: translateY(100vh) scale(1); opacity:1; }
-  100% { transform: translateY(-10vh) scale(1.5); opacity:0; }
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh) scale(1.6);
+    opacity: 0;
+  }
 }
 
-/* ===================== */
-/* 📱 MOBILE FIX */
-/* ===================== */
+/* ================= 📱 MOBILE FIX ================= */
 @media (max-width: 768px) {
 
+  h1 { font-size: 26px; }
+
+  /* slideshow FIX CENTER */
   #slideshow {
-    display: flex;
+    display:flex;
     flex-direction: column;
-    align-items: center;
-    height: auto;
-    margin-bottom: 60px;
+    align-items:center;
+    justify-content:center;
+    height:auto;
+    margin-bottom: 50px;
   }
 
   .slide {
     position: relative;
-    transform: none !important;
-    opacity: 1 !important;
-    margin: 12px 0;
-    width: 70%;
-    animation: none !important;
+    left:auto;
+    top:auto;
+    transform:none !important;
+    opacity:1 !important;
+    width: 75%;
+    margin: 10px 0;
   }
 
   #letter {
-    margin-top: 20px;
     width: 90%;
     font-size: 16px;
-  }
-
-  h1 {
-    font-size: 28px;
+    margin-top: 20px;
   }
 }
-
 </style>
 </head>
 
 <body>
 
+<!-- HEART LAYER -->
+<div id="heartContainer"></div>
+
 <!-- PASSWORD -->
 <div id="passwordBox">
   <h2>Enter Secret Code 💌</h2>
-  <p>hint:Our special date (DDMMYYYY)</p>
-  <input type="password" id="passwordInput" placeholder="Type here babe...">
+  <p>hint: Our special date (DDMMYYYY)</p>
+  <input type="password" id="passwordInput" placeholder="type here babe...">
   <br><br>
   <button id="unlockBtn" onclick="checkPassword()">Unlock 💖</button>
   <p id="errorMsg"></p>
@@ -160,7 +178,7 @@ h1 { font-size:40px; color:#ff4da6; }
 <div id="quizBox" class="hidden">
   <h2>Love Quiz 💕</h2>
   <p id="question"></p>
-  <input type="text" id="answerInput" placeholder="Your memory...">
+  <input type="text" id="answerInput" placeholder="your memory...">
   <br><br>
   <button onclick="checkAnswer()">Next ➡️</button>
   <p id="quizError" style="color:red;"></p>
@@ -189,11 +207,12 @@ const correctPassword = "142026";
 const quiz = [
   { q: "Where did we first meet?", a: "school" },
   { q: "What is my nickname for you babe?", a: "babe" },
-  { q: "A song that reminds us of eachh other", a: "about you" }
+  { q: "A song that reminds us of each other", a: "about you" }
 ];
 
 let current = 0;
 
+/* PASSWORD */
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   if(input === correctPassword) {
@@ -201,10 +220,11 @@ function checkPassword() {
     document.getElementById('quizBox').classList.remove('hidden');
     loadQuestion();
   } else {
-    document.getElementById('errorMsg').innerText = "Nope 😏 think again babe";
+    document.getElementById('errorMsg').innerText = "Nope 😏 try again babe";
   }
 }
 
+/* QUIZ */
 function loadQuestion() {
   document.getElementById('question').innerText = quiz[current].q;
   document.getElementById('answerInput').value = "";
@@ -212,6 +232,7 @@ function loadQuestion() {
 
 function checkAnswer() {
   const input = document.getElementById('answerInput').value.toLowerCase().trim();
+
   if(input === quiz[current].a.toLowerCase()) {
     current++;
     if(current < quiz.length) {
@@ -221,10 +242,11 @@ function checkAnswer() {
       document.getElementById('startBtn').classList.remove('hidden');
     }
   } else {
-    document.getElementById('quizError').innerText = "Wrong answer 😝 try again! babe";
+    document.getElementById('quizError').innerText = "Wrong answer 😝 try again!";
   }
 }
 
+/* START */
 function startSurprise() {
   document.getElementById('startBtn').style.display = 'none';
   document.getElementById('content').classList.remove('hidden');
@@ -235,18 +257,15 @@ function startSurprise() {
   createHearts();
 }
 
+/* IMAGE ANIMATION */
 function showSplitImages() {
-  const left = document.querySelector('.left');
-  const center = document.querySelector('.center');
-  const right = document.querySelector('.right');
-
-  left.style.animation = "splitLeft 1.5s forwards";
-  center.style.animation = "splitCenter 1.5s forwards";
-  right.style.animation = "splitRight 1.5s forwards";
+  document.querySelector('.left').style.animation = "splitLeft 1.5s forwards";
+  document.querySelector('.center').style.animation = "splitCenter 1.5s forwards";
+  document.querySelector('.right').style.animation = "splitRight 1.5s forwards";
 }
 
-/* Typing */
-const message = "Happy 19th Birthdayyy 💕 You are my everythinggg babe. I am so lucky to have you in my life. I'll always love you forever🫶.";
+/* LETTER */
+const message = "Happy 19th Birthdayyy 💕 You are my everything babe. I am so lucky to have you. I'll always love you forever 🫶.";
 let i = 0;
 
 function typeLetter() {
@@ -255,23 +274,26 @@ function typeLetter() {
     if(i < message.length) {
       el.innerHTML += message.charAt(i);
       i++;
-      setTimeout(typing, 50);
+      setTimeout(typing, 45);
     }
   }
   typing();
 }
 
-/* Hearts */
+/* 💖 HEARTS (FULL SCREEN FLOAT FROM BOTTOM) */
 function createHearts() {
   setInterval(() => {
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.innerHTML = '💖';
+
     heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.fontSize = (Math.random()*20+20) + 'px';
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
-  }, 300);
+    heart.style.fontSize = (Math.random() * 20 + 18) + 'px';
+
+    document.getElementById('heartContainer').appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+  }, 250);
 }
 </script>
 
