@@ -12,7 +12,7 @@ body {
   background:black;
   color:white;
   text-align:center;
-  overflow:hidden;
+  overflow-x:hidden;
 }
 
 .hidden { display:none; }
@@ -54,7 +54,7 @@ h1 { font-size:40px; color:#ff4da6; }
   width: 100%;
   height: 350px;
   margin-top: 40px;
-  margin-bottom: 140px; /* 👈 စာမကွယ်အောင် space */
+  margin-bottom: 140px;
 }
 
 .slide {
@@ -76,7 +76,7 @@ h1 { font-size:40px; color:#ff4da6; }
 
 @keyframes splitCenter {
   from { transform: translate(-50%, -50%) scale(0.5); opacity:0; }
-  to { transform: translate(-50%, -50%) scale(1); opacity:1; } /* 👈 အောက်ရွှေ့ */
+  to { transform: translate(-50%, -50%) scale(1); opacity:1; }
 }
 
 @keyframes splitRight {
@@ -92,7 +92,7 @@ h1 { font-size:40px; color:#ff4da6; }
   margin-left:auto;
   margin-right:auto;
   position: relative;
-  z-index: 2; /* 👈 ပုံပေါ်မတက်အောင် */
+  z-index: 2;
   text-shadow: 0 0 10px pink;
 }
 
@@ -107,6 +107,40 @@ h1 { font-size:40px; color:#ff4da6; }
   0% { transform: translateY(100vh) scale(1); opacity:1; }
   100% { transform: translateY(-10vh) scale(1.5); opacity:0; }
 }
+
+/* ===================== */
+/* 📱 MOBILE FIX */
+/* ===================== */
+@media (max-width: 768px) {
+
+  #slideshow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    margin-bottom: 60px;
+  }
+
+  .slide {
+    position: relative;
+    transform: none !important;
+    opacity: 1 !important;
+    margin: 12px 0;
+    width: 70%;
+    animation: none !important;
+  }
+
+  #letter {
+    margin-top: 20px;
+    width: 90%;
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}
+
 </style>
 </head>
 
@@ -155,7 +189,7 @@ const correctPassword = "142026";
 const quiz = [
   { q: "Where did we first meet?", a: "school" },
   { q: "What is my nickname for you babe?", a: "babe" },
-  { q: "A song that reminds us of eachh other", a: "aboutyou" }
+  { q: "A song that reminds us of eachh other", a: "about you" }
 ];
 
 let current = 0;
@@ -191,7 +225,6 @@ function checkAnswer() {
   }
 }
 
-/* START */
 function startSurprise() {
   document.getElementById('startBtn').style.display = 'none';
   document.getElementById('content').classList.remove('hidden');
@@ -202,7 +235,6 @@ function startSurprise() {
   createHearts();
 }
 
-/* SPLIT IMAGE */
 function showSplitImages() {
   const left = document.querySelector('.left');
   const center = document.querySelector('.center');
